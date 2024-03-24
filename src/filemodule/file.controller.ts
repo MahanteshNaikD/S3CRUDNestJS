@@ -157,7 +157,7 @@ export class FileController {
     if (output.statusCode === 200) {
       res.set({
         'Content-Type': `application/${output.fileType}`,
-        'Content-Disposition': `attachment; filename=${output.fileName + '.' + output.fileType.split('/')[1]}`,
+        'Content-Disposition': `attachment; filename=${output.fileName}`,
       });
       res.setHeader('Transfer-Encoding', 'chunked');
       const file = createReadStream(output.file);

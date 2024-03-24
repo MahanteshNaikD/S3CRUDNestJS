@@ -23,8 +23,10 @@ export class FileService {
   async createBucket(bodyInput: any, headers: any):Promise<any>  {
     const user = await this.validate(headers['x-access-token']);
     let userFileName = `${bodyInput.bucket + user.userName}`;
+    if(!fs.existsSync(`./S3`)){
+      fs.mkdirSync(`./S3`)
+    }
     let folderName = `./S3/${userFileName}`;
-
     let findBcket = await this.fileService.findOne({
       bucket: userFileName,
       user: user.userName,
@@ -116,7 +118,7 @@ export class FileService {
     let originalFile = join(PathOfFolder, file.originalname);
     try {
       let presentFile = findUser.files.find(
-        (value) => value.fileName === file.originalname.split('.')[0],
+        (value) => value.fileName === file.originalname,
       );
       if (presentFile) {
         return {
@@ -127,7 +129,7 @@ export class FileService {
 
       fs.writeFileSync(originalFile, file.buffer);
       let obj = {};
-      obj['fileName'] = file.originalname.split('.')[0]
+      obj['fileName'] = file.originalname
       obj['filePath'] = originalFile
       obj['fileType'] = file.mimetype
       obj['fileSize'] = file.size
