@@ -1,4 +1,4 @@
-import { Body, Controller, Post, HttpCode, HttpStatus } from '@nestjs/common';
+import { Body, Controller, Post} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UsersService } from '../UserModule/user.service';
 import { UserDto } from 'src/Dtos/userDto';
@@ -11,6 +11,33 @@ export class AuthController {
     private authService: AuthService,
     private userService: UsersService,
   ) {}
+
+
+  @ApiOperation({ summary: 'Create User' })
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        userName: {
+          type: 'string',
+          example: 'Jhon Dao',
+          description: 'userName',
+        },
+        password: {
+          type: 'string',
+          example: '********',
+          description: 'password',
+        },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'User Already Present' })
+  @ApiResponse({ status: 201, description: 'User Created Sccessfully' })
+  @ApiResponse({ status: 500, description: 'Error Creating User' })
+  @Post('createUser')
+  createUser(@Body() deviceInput: UserDto) {
+    return this.userService.creteUser(deviceInput);
+  }
 
   @ApiOperation({ summary: 'LogIn User' })
   @ApiBody({
@@ -40,29 +67,5 @@ export class AuthController {
 
 
 
-  @ApiOperation({ summary: 'Create User' })
-  @ApiBody({
-    schema: {
-      type: 'object',
-      properties: {
-        userName: {
-          type: 'string',
-          example: 'Jhon Dao',
-          description: 'userName',
-        },
-        password: {
-          type: 'string',
-          example: '********',
-          description: 'password',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 400, description: 'User Already Present' })
-  @ApiResponse({ status: 201, description: 'User Created Sccessfully' })
-  @ApiResponse({ status: 500, description: 'Error Creating User' })
-  @Post('createUser')
-  createUser(@Body() deviceInput: UserDto) {
-    return this.userService.creteUser(deviceInput);
-  }
+ 
 }

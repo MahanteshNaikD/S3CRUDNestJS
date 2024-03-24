@@ -5,13 +5,11 @@ import { Model } from 'mongoose';
 import { FileStore } from 'src/Models/File';
 import * as fs from 'fs';
 import path, { join } from 'path';
-import { FileDetails } from 'src/Models/FileDetails';
 
 @Injectable()
 export class FileService {
   constructor(
     @InjectModel('FileStore') private fileService: Model<FileStore>,
-    @InjectModel('FileDetails') private fileDetails: Model<FileDetails>,
     private jwtService: JwtService,
   ) {}
 

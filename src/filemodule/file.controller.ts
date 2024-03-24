@@ -8,8 +8,6 @@ import {
   UseInterceptors,
   StreamableFile,
   Res,
-  Response,
-  Header,
   Get,
   Query,
 } from '@nestjs/common';
@@ -17,16 +15,12 @@ import { FileService } from './file.service';
 import { AuthGuard } from 'src/Auth/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { createReadStream } from 'fs';
-import { pipeline } from 'stream';
-import { join } from 'path';
-import * as fs from 'fs';
 import {
-  ApiBearerAuth,
   ApiBody,
   ApiConsumes,
   ApiHeader,
   ApiOperation,
-  ApiProperty,
+  ApiProduces,
   ApiQuery,
   ApiResponse,
   ApiTags,
@@ -114,12 +108,16 @@ export class FileController {
   @ApiResponse({ status: 400, description: 'File Already Present' })
   @ApiResponse({ status: 201, description: 'File Upload Successfull' })
   @ApiResponse({ status: 500, description: 'File Upload Unsuccessfull' })
+  @ApiResponse({ status: 400, description: 'If more then one file  "message:"Too many files"' })
+  @ApiResponse({ status: 413, description: 'If file size is more then 500MB  "message:"File too large"' })
   @UseGuards(AuthGuard)
   @Post('uploadFile')
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file',{
+    limits:{fileSize:500 * 1024 * 1024,files:1},
+  }))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body() bodyInput: any,
+    @Body() bodyInput: fileDto,
     @Headers() header,
   ) {
     return this.fileService.uploadFile(file, bodyInput, header);
@@ -148,12 +146,11 @@ export class FileController {
   @Get('streamFile')
   async streamFile(
     @Res({ passthrough: true }) res,
-    @Query('bucket') bucket: any,
-    @Query('file') file: any,
+    @Query('bucket') bucket: fileDto,
+    @Query('file') file: string,
     @Headers() header,
   ): Promise<StreamableFile> {
     const output = await this.fileService.streamFile(bucket, file, header);
-    
     if (output.statusCode === 200) {
       res.set({
         'Content-Type': `application/${output.fileType}`,
@@ -162,13 +159,6 @@ export class FileController {
       res.setHeader('Transfer-Encoding', 'chunked');
       const file = createReadStream(output.file);
       return new StreamableFile(file);
-      // file.pipe(res)
-      // pipeline(file, res, (err) => {
-      //   if (err) {
-      //     console.log(err)
-      //   }
-      //   // file.pipe(res)
-      // });
     } else {
       res.send(output);
     }
@@ -219,7 +209,7 @@ export class FileController {
   @ApiResponse({ status: 200, description: 'Files Found', isArray: true })
   @UseGuards(AuthGuard)
   @Get('getAllFiles')
-  async getAllFiles(@Query('bucket') bucket: any, @Headers() header) {
+  async getAllFiles(@Query('bucket') bucket: fileDto, @Headers() header) {
     return this.fileService.getAllFiles(bucket, header);
   }
 
