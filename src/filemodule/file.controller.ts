@@ -136,7 +136,7 @@ export class FileController {
   @ApiQuery({
     name: 'file',
     type: 'string',
-    example: 'exmaple',
+    example: 'exmaple.txt',
     description: 'give file name',
   })
   @ApiResponse({ status: 404, description: 'Bucket Not Found' })
@@ -177,7 +177,7 @@ export class FileController {
         },
         file: {
           type: 'file',
-          example: 'exmaple',
+          example: 'exmaple.txt',
           description: 'give file name',
         },
       },

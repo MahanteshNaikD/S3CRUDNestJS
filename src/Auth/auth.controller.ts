@@ -39,7 +39,7 @@ export class AuthController {
     return this.userService.creteUser(deviceInput);
   }
 
-  @ApiOperation({ summary: 'LogIn User' })
+  @ApiOperation({ summary: 'LogIn User for x-access-token' })
   @ApiBody({
     schema: {
       type: 'object',

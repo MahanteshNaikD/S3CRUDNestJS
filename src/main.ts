@@ -12,7 +12,7 @@ async function bootstrap() {
     .addTag('All Routes')
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('file', app, document);
+  SwaggerModule.setup('S3', app, document);
   await app.listen(3005);
 }
 bootstrap();

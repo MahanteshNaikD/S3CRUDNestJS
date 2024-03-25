@@ -27,7 +27,7 @@ import {
         );
         request['user'] = payload;
       } catch {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException("Invalid/Token Expried");
       }
       return true;
     }

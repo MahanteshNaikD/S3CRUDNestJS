@@ -34,7 +34,7 @@ nest start run
 
 
 For Swagger 
-http://localhost:3005/file
+http://localhost:3005/S3
 
 
 Project Contains Auth and File Routes
