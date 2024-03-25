@@ -20,12 +20,10 @@ import {
   ApiConsumes,
   ApiHeader,
   ApiOperation,
-  ApiProduces,
   ApiQuery,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { fileDto } from 'src/Dtos/userDto';
 
 @ApiTags('file')
 @Controller('file')
@@ -46,6 +44,7 @@ export class FileController {
       },
     },
   })
+  @ApiResponse({ status: 404, description: 'Missing Required Fileds' })
   @ApiResponse({ status: 201, description: 'Bucket Created Successfull' })
   @ApiResponse({
     status: 400,
@@ -54,7 +53,7 @@ export class FileController {
   @ApiResponse({ status: 500, description: 'Bucket Created Unsuccessfull' })
   @UseGuards(AuthGuard)
   @Post('createBucket')
-  async createBucket(@Body() bodyInput: fileDto, @Headers() header) {
+  async createBucket(@Body() bodyInput: any, @Headers() header) {
     return this.fileService.createBucket(bodyInput, header);
   }
 
@@ -106,6 +105,7 @@ export class FileController {
   })
   @ApiResponse({ status: 404, description: 'Bucket Not Found For The User' })
   @ApiResponse({ status: 400, description: 'File Already Present' })
+  @ApiResponse({ status: 404, description: 'Missing Required Fileds' })
   @ApiResponse({ status: 201, description: 'File Upload Successfull' })
   @ApiResponse({ status: 500, description: 'File Upload Unsuccessfull' })
   @ApiResponse({ status: 400, description: 'If more then one file  "message:"Too many files"' })
@@ -117,7 +117,7 @@ export class FileController {
   }))
   async uploadFile(
     @UploadedFile() file: Express.Multer.File,
-    @Body() bodyInput: fileDto,
+    @Body() bodyInput: any,
     @Headers() header,
   ) {
     return this.fileService.uploadFile(file, bodyInput, header);
@@ -139,7 +139,7 @@ export class FileController {
   @ApiResponse({ status: 200, description: 'Files Found', isArray: true })
   @UseGuards(AuthGuard)
   @Get('getAllFiles')
-  async getAllFiles(@Query('bucket') bucket: fileDto, @Headers() header) {
+  async getAllFiles(@Query('bucket') bucket: any, @Headers() header) {
     return this.fileService.getAllFiles(bucket, header);
   }
 
@@ -162,11 +162,12 @@ export class FileController {
   @ApiResponse({ status: 404, description: 'Bucket Not Found' })
   @ApiResponse({ status: 200, description: 'File Streaming' })
   @ApiResponse({ status: 404, description: 'File Not Found' })
+  @ApiResponse({ status: 404, description: 'Missing Required Fileds' })
   @UseGuards(AuthGuard)
   @Get('streamFile')
   async streamFile(
     @Res({ passthrough: true }) res,
-    @Query('bucket') bucket: fileDto,
+    @Query('bucket') bucket: any,
     @Query('file') file: string,
     @Headers() header,
   ): Promise<StreamableFile> {
@@ -211,7 +212,7 @@ export class FileController {
   @ApiHeader({ name: 'x-access-token' })
   @UseGuards(AuthGuard)
   @Post('deleteFile')
-  async deleteFile(@Body() bodyInput: fileDto, @Headers() header) {
+  async deleteFile(@Body() bodyInput: any, @Headers() header) {
     return this.fileService.deleteFile(bodyInput, header);
   }
 
@@ -238,7 +239,7 @@ export class FileController {
   @ApiHeader({ name: 'x-access-token' })
   @UseGuards(AuthGuard)
   @Post('deleteBucket')
-  async deleteBucket(@Body() bodyInput: fileDto, @Headers() header) {
+  async deleteBucket(@Body() bodyInput: any, @Headers() header) {
     return this.fileService.deleteBucket(bodyInput, header);
   }
 }

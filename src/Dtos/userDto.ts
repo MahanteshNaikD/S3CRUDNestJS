@@ -3,8 +3,3 @@ export interface UserDto {
   password: string;
 }
 
-
-export interface fileDto {
-  bucket:string,
-}
-

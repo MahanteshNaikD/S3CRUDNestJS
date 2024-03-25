@@ -20,6 +20,13 @@ export class FileService {
 
   async createBucket(bodyInput: any, headers: any):Promise<any>  {
     const user = await this.validate(headers['x-access-token']);
+    let { bucket } = bodyInput;
+    if (!bucket) {
+      return {
+        message: 'Missing Required Fileds',
+        statusCode: 404,
+      };
+    }
     let userFileName = `${bodyInput.bucket + user.userName}`;
     if(!fs.existsSync(`./S3`)){
       fs.mkdirSync(`./S3`)
@@ -95,6 +102,12 @@ export class FileService {
 
   async uploadFile(file: any, bodyData: any, headres: any):Promise<any>  {
     let { bucket } = bodyData;
+    if (!bucket) {
+      return {
+        message: 'Missing Required Fileds',
+        statusCode: 404,
+      };
+    }
     const user = await this.validate(headres['x-access-token']);
     let userFileName = `${bucket + user.userName}`;
     let findUser = await this.fileService.findOne({ bucket: userFileName });
@@ -154,6 +167,12 @@ export class FileService {
 
   async streamFile(bucket: any, file:any, headres: any): Promise<any> {
     const user = await this.validate(headres['x-access-token']);
+    if (!bucket || !file) {
+      return {
+        message: 'Missing Required Fileds',
+        statusCode: 404,
+      };
+    }
     let userFileName = `${bucket + user.userName}`;
     let findFile = await this.fileService.findOne({
       bucket: userFileName,
