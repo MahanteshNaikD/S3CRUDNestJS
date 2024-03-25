@@ -26,10 +26,17 @@ Packages are Used in Project
 
 Run The Project by Following command
 
+
+npm install 
+
+
 nest start 
+
 or
 nest start --watch
+
 or
+
 nest start run
 
 
