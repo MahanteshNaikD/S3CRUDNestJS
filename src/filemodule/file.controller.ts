@@ -123,6 +123,26 @@ export class FileController {
     return this.fileService.uploadFile(file, bodyInput, header);
   }
 
+
+
+  @ApiHeader({ name: 'x-access-token' })
+  @ApiOperation({ summary: 'Get files from Bucket' })
+  @ApiQuery({
+    name: 'bucket',
+    type: 'string',
+    example: 'bucket name',
+    description: 'bucket name for storing file',
+  })
+  @ApiResponse({ status: 404, description: 'Missing Required Fileds' })
+  @ApiResponse({ status: 400, description: 'Bucket Not Found for User' })
+  @ApiResponse({ status: 404, description: 'Files Not Found' })
+  @ApiResponse({ status: 200, description: 'Files Found', isArray: true })
+  @UseGuards(AuthGuard)
+  @Get('getAllFiles')
+  async getAllFiles(@Query('bucket') bucket: fileDto, @Headers() header) {
+    return this.fileService.getAllFiles(bucket, header);
+  }
+
   @ApiHeader({ name: 'x-access-token' })
   @ApiOperation({
     summary: 'GetObject or File by giving bucket name and file name',
@@ -195,23 +215,7 @@ export class FileController {
     return this.fileService.deleteFile(bodyInput, header);
   }
 
-  @ApiHeader({ name: 'x-access-token' })
-  @ApiOperation({ summary: 'Get files from Bucket' })
-  @ApiQuery({
-    name: 'bucket',
-    type: 'string',
-    example: 'bucket name',
-    description: 'bucket name for storing file',
-  })
-  @ApiResponse({ status: 404, description: 'Missing Required Fileds' })
-  @ApiResponse({ status: 400, description: 'Bucket Not Found for User' })
-  @ApiResponse({ status: 404, description: 'Files Not Found' })
-  @ApiResponse({ status: 200, description: 'Files Found', isArray: true })
-  @UseGuards(AuthGuard)
-  @Get('getAllFiles')
-  async getAllFiles(@Query('bucket') bucket: fileDto, @Headers() header) {
-    return this.fileService.getAllFiles(bucket, header);
-  }
+ 
 
   @ApiOperation({ summary: 'Delete Bucket' })
   @ApiBody({
